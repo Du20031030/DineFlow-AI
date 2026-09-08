@@ -12,3 +12,4 @@ class UserAgentContext:
 
     # 当前用户角色
     role: str
+    

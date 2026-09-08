@@ -1,0 +1,57 @@
+sky:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: sky_take_out
+    username: your_mysql_username
+    password: your_mysql_password
+
+  alioss:
+    endpoint: https://oss-cn-hangzhou.aliyuncs.com
+    accessKeyId: your_oss_access_key_id
+    accessKeySecret: your_oss_access_key_secret
+    bucketName: your_oss_bucket_name
+
+  redis:
+    host: localhost
+    port: 6379
+    password: your_redis_password
+    database: 10
+
+  rabbitmq:
+    # 本地开发默认连接本机RabbitMQ。
+    # 启动项目前需要先启动RabbitMQ服务，否则订单消息无法发送，管理端来单提醒会延迟。
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+  agent:
+    base-url: http://127.0.0.1:8000
+    connect-timeout: 3s
+    read-timeout: 120s
+    executor:
+      core-pool-size: 8
+      max-pool-size: 32
+      queue-capacity: 100
+      keep-alive-seconds: 60
+      await-termination-seconds: 30
+
+  jwt:
+    admin-secret-key: your_admin_jwt_secret
+    user-secret-key: your_user_jwt_secret
+
+  wechat:
+    appid: your_wechat_appid
+    secret: your_wechat_secret
+    #    这里必须得用企业认证的公众号的商户号和商户证书，才能使用微信支付功能，所以这里的配置需要你自己去申请一个企业认证的公众号，然后在微信商户平台申请一个商户号和商户证书，然后把这些信息配置到这里
+    mchid: your_wechat_mchid
+    mchSerialNo: yoour_wechat_mch_serial_no
+    privateKeyPath: your_wechat_private_key_path
+    apiV3Key: your_api_v3_key
+#这里的notifyUrl是微信支付回调地址，必须是公网可访问的地址，不能是localhost
+    weChatPayNotifyUrl: http://localhost:8080/pay/notify
+    notifyUrl: http://localhost:8080/pay/notify
+    refundNotifyUrl: http://localhost:8080/pay/refund/notify

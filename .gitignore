@@ -18,10 +18,8 @@ $RECYCLE.BIN/
 .env.*
 !.env.example
 application-local.yml
-application-dev.yml
 application-*.local.yml
 **/application-local.yml
-**/application-dev.yml
 **/application-*.local.yml
 project.private.config.json
 
