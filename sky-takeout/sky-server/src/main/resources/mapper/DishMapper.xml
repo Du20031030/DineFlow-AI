@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+
+    <!-- insert dish -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into dish (name, category_id, price, image, description, status, create_time, update_time, create_user, update_user)
+        values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+    </insert>
+
+    <!-- update dish -->
+    <update id="update">
+        update dish
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- delete dishes by ids -->
+    <delete id="deleteByIds">
+        delete from dish where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- page query -->
+    <select id="pageQuery" resultType="com.sky.vo.DishVO">
+        select d.*, c.name as categoryName
+        from dish d
+        left join category c on d.category_id = c.id
+        <where>
+            <if test="name != null ">
+                and d.name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and d.category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and d.status = #{status}
+            </if>
+        </where>
+        order by d.update_time desc
+    </select>
+
+    <!-- dynamic query -->
+    <select id="list" resultType="com.sky.entity.Dish">
+        select * from dish
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <!-- agent dish search -->
+    <select id="searchForAgent"
+            parameterType="com.sky.dto.AgentDishSearchDTO"
+            resultType="com.sky.vo.AgentDishSummaryVO">
+        select
+        d.id as dishId,
+        d.name,
+        d.price
+        from dish d
+        <where>
+            d.status = 1
+            <!-- 菜品关键词 -->
+            <if test="keyword != null and keyword != ''">
+                and (
+                d.name like concat('%', #{keyword}, '%')
+                or d.description like concat('%', #{keyword}, '%')
+                )
+            </if>
+            <!-- 菜品分类 -->
+            <if test="categoryId != null">
+                and d.category_id = #{categoryId}
+            </if>
+            <!-- 最低价格 -->
+            <if test="minPrice != null">
+                and d.price &gt;= #{minPrice}
+            </if>
+            <!-- 最高价格 -->
+            <if test="maxPrice != null">
+                and d.price &lt;= #{maxPrice}
+            </if>
+            <!-- 用户辣度偏好 -->
+            <if test="spicyLevel != null and spicyLevel != ''">
+                and exists (
+                select 1
+                from dish_flavor df_spicy
+                where df_spicy.dish_id = d.id
+                and df_spicy.name = '辣度'
+                and json_contains(
+                df_spicy.value,
+                json_quote(#{spicyLevel})
+                )
+                )
+            </if>
+            <!-- 用户忌口 -->
+            <if test="dislikedIngredients != null and dislikedIngredients.size() > 0">
+                <foreach collection="dislikedIngredients"
+                         item="ingredient">
+                    and exists (
+                    select 1
+                    from dish_flavor df_dislike
+                    where df_dislike.dish_id = d.id
+                    and df_dislike.name = '忌口'
+                    and json_contains(
+                    df_dislike.value,
+                    json_quote(
+                    concat('不要', #{ingredient})
+                    )
+                    )
+                    )
+                </foreach>
+            </if>
+        </where>
+        order by d.id desc limit #{limit}
+
+    </select>
+
+
+    <!-- agent dish detail -->
+    <select id="getAgentDishById" parameterType="java.lang.Long" resultType="com.sky.vo.AgentDishVO">
+        select id,name,price,image,description,category_id as categoryId
+        from dish
+        where id = #{dishId} and status = 1
+    </select>
+
+    <select id="countByStatus" resultType="java.lang.Integer">
+        select count(id) from dish
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

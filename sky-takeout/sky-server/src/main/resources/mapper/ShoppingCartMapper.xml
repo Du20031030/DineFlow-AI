@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.ShoppingCartMapper">
+
+<!--    agent修改购物车数量-->
+    <update id="updateNumberForAgent">
+        update shopping_cart
+        set number = #{number}
+        where id = #{cartItemId}
+          and user_id = #{userId}
+    </update>
+
+<!--    agent删除购物车指定菜品-->
+    <delete id="deleteCartItemForAgent">
+        delete from shopping_cart
+        where id = #{cartItemId}
+          and user_id = #{userId}
+    </delete>
+
+    <!--    动态条件查询-->
+    <select id="list" resultType="com.sky.entity.ShoppingCart">
+        select * from shopping_cart
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="dishId != null">
+                and dish_id = #{dishId}
+            </if>
+            <if test="dishFlavor != null">
+                and dish_flavor = #{dishFlavor}
+            </if>
+            <if test="setmealId != null">
+                and setmeal_id = #{setmealId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

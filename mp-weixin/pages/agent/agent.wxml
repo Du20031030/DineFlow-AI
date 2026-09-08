@@ -1,0 +1,86 @@
+<view class="agent-page">
+  <!-- 自定义顶部导航栏（navigationStyle: custom） -->
+  <view class="agent-header">
+    <view class="status-bar" style="height:{{statusBarHeight}}px"></view>
+    <view class="nav-row">
+      <view class="header-back" bindtap="goBack">
+        <image class="back-icon" src="../../static/btn_back.png"></image>
+      </view>
+      <text class="header-title">AI智能助手</text>
+    </view>
+  </view>
+
+  <!-- 主体：左侧会话列表 + 右侧聊天区 -->
+  <view class="agent-body">
+    <view class="sidebar">
+      <view class="sidebar-top">
+        <view class="new-chat" bindtap="onNewChat">+ 新建聊天</view>
+      </view>
+      <scroll-view class="session-scroll" scroll-y="true">
+        <view
+          wx:for="{{sessions}}"
+          wx:key="sessionId"
+          class="session-item {{item.sessionId === currentSessionId ? 'active' : ''}}"
+          data-id="{{item.sessionId}}"
+          data-title="{{item.title}}"
+          bindtap="onSelectSession"
+          bindlongpress="onSessionActions"
+        >
+          <text class="session-title">{{item.title}}</text>
+          <text class="session-more">···</text>
+        </view>
+        <view wx:if="{{sessions.length === 0}}" class="session-empty">暂无历史会话</view>
+      </scroll-view>
+    </view>
+
+    <view class="chat-area">
+      <view class="chat-header">
+        <text class="chat-title">{{currentTitle}}</text>
+      </view>
+
+      <scroll-view class="msg-scroll" scroll-y="true" scroll-into-view="{{scrollAnchor}}">
+        <view class="msg-list">
+          <view wx:for="{{messages}}" wx:key="index" class="msg-row {{item.role === 'USER' ? 'row-user' : 'row-assistant'}}">
+            <!-- USER 消息 -->
+            <view wx:if="{{item.role === 'USER'}}" class="bubble bubble-user">{{item.content}}</view>
+            <!-- ASSISTANT 消息：按行渲染，行内支持 **加粗** -->
+            <view wx:else class="bubble bubble-assistant">
+              <view wx:for="{{item.lines}}" wx:for-item="line" wx:for-index="li" wx:key="li" class="msg-line">
+                <text
+                  wx:for="{{line.segments}}"
+                  wx:for-item="seg"
+                  wx:for-index="si"
+                  wx:key="si"
+                  class="{{seg.bold ? 'seg-bold' : ''}}"
+                >{{seg.text}}</text>
+              </view>
+              <text wx:if="{{loading && index === messages.length - 1}}" class="typing-cursor">▍</text>
+            </view>
+          </view>
+          <!-- 底部锚点：用于滚动到底部 -->
+          <view id="anchorA" class="anchor"></view>
+          <view id="anchorB" class="anchor"></view>
+        </view>
+      </scroll-view>
+
+      <!-- 底部输入区 -->
+      <view class="input-bar">
+        <textarea
+          class="chat-input"
+          value="{{inputText}}"
+          placeholder="输入消息，Enter 发送，可换行"
+          placeholder-class="input-placeholder"
+          bindinput="onInput"
+          bindconfirm="onSend"
+          confirm-type="send"
+          confirm-hold="{{true}}"
+          show-confirm-bar="{{false}}"
+          auto-height="true"
+          maxlength="-1"
+          cursor-spacing="20"
+        ></textarea>
+        <view class="send-btn {{loading ? 'send-disabled' : ''}}" bindtap="onSend">{{loading ? '生成中…' : '发送'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

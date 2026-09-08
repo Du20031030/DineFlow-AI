@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.OrderDetailMapper">
+<!--    批量插入-->
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into order_detail (order_id, name, image, dish_id, setmeal_id, dish_flavor, number, amount)
+        values
+        <foreach collection="orderDetailList" item="item" separator=",">
+            (#{item.orderId}, #{item.name}, #{item.image}, #{item.dishId}, #{item.setmealId}, #{item.dishFlavor}, #{item.number}, #{item.amount})
+        </foreach>
+    </insert>
+
+    <!-- 统计已完成订单中的商品销量前十 -->
+    <select id="getSalesTop10" resultType="com.sky.dto.GoodsSalesDTO">
+        select od.name, sum(od.number) number
+        from order_detail od, orders o
+        where od.order_id = o.id
+          and o.status = #{status}
+          and o.order_time &gt;= #{begin}
+          and o.order_time &lt;= #{end}
+        group by od.name
+        order by number desc
+        limit 0, 10
+    </select>
+</mapper>

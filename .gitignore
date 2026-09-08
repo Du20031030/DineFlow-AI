@@ -1,0 +1,69 @@
+# OS files
+[Dd]esktop.ini
+Thumbs.db
+$RECYCLE.BIN/
+.DS_Store
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Environment and local config
+.env
+.env.*
+!.env.example
+application-local.yml
+application-dev.yml
+application-*.local.yml
+**/application-local.yml
+**/application-dev.yml
+**/application-*.local.yml
+project.private.config.json
+
+# Secrets and certificates
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+.secrets
+.secrets.*
+secrets/
+credentials/
+*.secret
+*.secrets
+*.credential
+*.credentials
+*.token
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Java / Maven
+target/
+**/target/
+*.class
+
+# Node / frontend
+node_modules/
+**/node_modules/
+node-modules/
+**/node-modules/
+dist/
+build/
+coverage/
+
+# Logs
+*.log
+logs/

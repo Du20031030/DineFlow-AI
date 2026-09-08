@@ -1,0 +1,75 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    druid:
+      driver-class-name: ${sky.datasource.driver-class-name}
+      url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${sky.datasource.username}
+      password: ${sky.datasource.password}
+  redis:
+    host: ${sky.redis.host}
+    port: ${sky.redis.port}
+    password: ${sky.redis.password}
+    database: ${sky.redis.database}
+  rabbitmq:
+    # RabbitMQ连接配置。订单支付成功后会向RabbitMQ发送消息，再由消费者异步推送WebSocket来单提醒。
+    host: ${sky.rabbitmq.host}
+    port: ${sky.rabbitmq.port}
+    username: ${sky.rabbitmq.username}
+    password: ${sky.rabbitmq.password}
+    virtual-host: ${sky.rabbitmq.virtual-host}
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.sky.entity
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com:
+      sky:
+        mapper: debug
+        service: info
+        controller: info
+
+sky:
+  jwt:
+#    管理端登陆的配置信息
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: ${sky.jwt.admin-secret-key}
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+
+#   用户端的登陆配置信息
+    user-secret-key: ${sky.jwt.user-secret-key}
+    user-ttl: 7200000
+    user-token-name: authentication
+
+  # 阿里云OSS配置
+  alioss:
+    endpoint: ${sky.alioss.endpoint}
+    accessKeyId: ${sky.alioss.accessKeyId}
+    accessKeySecret: ${sky.alioss.accessKeySecret}
+    bucketName: ${sky.alioss.bucketName}
+
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}
+#    mchid: ${sky.wechat.mchId}
+#    mchSerialNo: ${sky.wechat.mchSerialNo}
+#    privateKeyFilePath: ${sky.wechat.privateKeyFilePath}
+#    apiV3Key: ${sky.wechat.apiV3Key}
+#    we-chat-pay-cert-file-path: ${sky.wechat.weChatPayCertPath}
+#    notifyUrl: ${sky.wechat.notifyUrl}
+#    refundNotifyUrl: ${sky.wechat.refundNotifyUrl}
