@@ -598,8 +598,8 @@ RabbitMQ 主要影响订单支付成功后的异步消息和 WebSocket 来单提
 
 ## License
 
-## License
-
 本项目采用 MIT License 开源协议。
+
 您可以自由使用、复制、修改和分发本项目代码，但需要保留原作者版权声明和许可证文件。
+
 详细协议内容请参见 [LICENSE](./LICENSE) 文件。
